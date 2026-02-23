@@ -18,11 +18,18 @@ This application is designed to visualize and analyze how **Initial Values**, **
 # --- Debug Info (Only shows if solver is missing) ---
 def get_ipopt_path():
     import shutil
+    import sys
     # 1. Check in PATH
     path = shutil.which("ipopt")
     if path: return path
-    # 2. Check common Conda/Linux paths
-    for p in ["/home/adminuser/miniconda3/bin/ipopt", "/usr/bin/ipopt", "/opt/conda/bin/ipopt"]:
+    
+    # 2. Check the directory of the current Python executable (Extremely reliable for Conda)
+    bin_dir = os.path.dirname(sys.executable)
+    path_in_bin = os.path.join(bin_dir, "ipopt")
+    if os.path.exists(path_in_bin): return path_in_bin
+
+    # 3. Check common Conda/Linux paths
+    for p in ["/home/adminuser/.conda/bin/ipopt", "/usr/bin/ipopt", "/opt/conda/bin/ipopt"]:
         if os.path.exists(p): return p
     return None
 
