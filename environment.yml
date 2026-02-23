@@ -1,0 +1,12 @@
+channels:
+  - conda-forge
+dependencies:
+  - ipopt
+  - python=3.11
+  - pip
+  - pip:
+    - pyomo
+    - streamlit
+    - matplotlib
+    - numpy
+    - pandas

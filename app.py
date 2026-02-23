@@ -15,6 +15,31 @@ st.markdown("""
 This application is designed to visualize and analyze how **Initial Values**, **Tolerance**, and **Maximum Iterations** affect the results of Non-Linear Programming (NLP) optimization.
 """)
 
+# --- Debug Info (Only shows if solver is missing) ---
+def get_ipopt_path():
+    import shutil
+    # 1. Check in PATH
+    path = shutil.which("ipopt")
+    if path: return path
+    # 2. Check common Conda/Linux paths
+    for p in ["/home/adminuser/miniconda3/bin/ipopt", "/usr/bin/ipopt", "/opt/conda/bin/ipopt"]:
+        if os.path.exists(p): return p
+    return None
+
+ipopt_bin = get_ipopt_path()
+if not ipopt_bin:
+    with st.expander("⚠️ Solver Warning: IPOPT not found in standard PATH"):
+        st.error("IPOPT executable was not found. Please check deployment logs.")
+        st.write("Current PATH:", os.environ.get("PATH", ""))
+        import sys
+        st.write("Python executable:", sys.executable)
+        # Try to list some common dirs
+        for d in ["/home/adminuser/venv/bin", "/usr/bin"]:
+            if os.path.exists(d):
+                files = [f for f in os.listdir(d) if "ipopt" in f.lower()]
+                if files: st.write(f"Found related files in {d}: {files}")
+
+
 # --- Sidebar Settings ---
 st.sidebar.header("🛠 Optimization Parameters")
 
@@ -58,15 +83,12 @@ def solve_nlp(x_i, y_i, t, m):
         sense=pyo.maximize
     )
     
-    opt = SolverFactory('ipopt')
-    
-    # Robustness: Check common Linux paths if not found in PATH
-    if not opt.available():
-        common_paths = ["/usr/bin/ipopt", "/usr/local/bin/ipopt"]
-        for p in common_paths:
-            if os.path.exists(p):
-                opt = SolverFactory('ipopt', executable=p)
-                break
+    # Use the detected binary path
+    ipopt_exec = get_ipopt_path()
+    if ipopt_exec:
+        opt = SolverFactory('ipopt', executable=ipopt_exec)
+    else:
+        opt = SolverFactory('ipopt')
 
     opt.options['tol'] = t
     opt.options['max_iter'] = m
