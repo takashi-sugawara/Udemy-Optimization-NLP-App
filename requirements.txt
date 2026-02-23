@@ -1,0 +1,6 @@
+pyomo
+streamlit
+matplotlib
+numpy
+pandas
+ipopt-bin
