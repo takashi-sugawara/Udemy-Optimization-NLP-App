@@ -5,6 +5,7 @@ import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 # Page Config
 st.set_page_config(page_title="NLP Optimization Simulator", layout="wide")
@@ -58,6 +59,15 @@ def solve_nlp(x_i, y_i, t, m):
     )
     
     opt = SolverFactory('ipopt')
+    
+    # Robustness: Check common Linux paths if not found in PATH
+    if not opt.available():
+        common_paths = ["/usr/bin/ipopt", "/usr/local/bin/ipopt"]
+        for p in common_paths:
+            if os.path.exists(p):
+                opt = SolverFactory('ipopt', executable=p)
+                break
+
     opt.options['tol'] = t
     opt.options['max_iter'] = m
     
