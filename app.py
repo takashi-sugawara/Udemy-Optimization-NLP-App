@@ -15,7 +15,7 @@ st.markdown("""
 This application is designed to visualize and analyze how **Initial Values**, **Tolerance**, and **Maximum Iterations** affect the results of Non-Linear Programming (NLP) optimization.
 """)
 
-# --- Debug Info (Only shows if solver is missing) ---
+# --- Solver Path Detection ---
 def get_ipopt_path():
     import shutil
     import sys
@@ -23,7 +23,7 @@ def get_ipopt_path():
     path = shutil.which("ipopt")
     if path: return path
     
-    # 2. Check the directory of the current Python executable (Extremely reliable for Conda)
+    # 2. Check the directory of the current Python executable (Reliable for Conda)
     bin_dir = os.path.dirname(sys.executable)
     path_in_bin = os.path.join(bin_dir, "ipopt")
     if os.path.exists(path_in_bin): return path_in_bin
@@ -34,17 +34,6 @@ def get_ipopt_path():
     return None
 
 ipopt_bin = get_ipopt_path()
-if not ipopt_bin:
-    with st.expander("⚠️ Solver Warning: IPOPT not found in standard PATH"):
-        st.error("IPOPT executable was not found. Please check deployment logs.")
-        st.write("Current PATH:", os.environ.get("PATH", ""))
-        import sys
-        st.write("Python executable:", sys.executable)
-        # Try to list some common dirs
-        for d in ["/home/adminuser/venv/bin", "/usr/bin"]:
-            if os.path.exists(d):
-                files = [f for f in os.listdir(d) if "ipopt" in f.lower()]
-                if files: st.write(f"Found related files in {d}: {files}")
 
 
 # --- Sidebar Settings ---
