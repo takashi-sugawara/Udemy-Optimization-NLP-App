@@ -1,0 +1,12 @@
+name: nlp-app
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pyomo
+  - ipopt
+  - streamlit
+  - matplotlib
+  - numpy
+  - pandas
