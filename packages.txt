@@ -1,1 +1,1 @@
-coinor-libipopt-dev
+ipopt
