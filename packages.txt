@@ -1,1 +1,2 @@
-ipopt
+coinor-libipopt-dev
+gfortran
